@@ -885,6 +885,12 @@ _lp_git_branch_color()
 {
     (( LP_ENABLE_GIT )) || return
 
+    # crobinso: just use __git_ps1 and exit early
+    if type -t __git_ps1 | grep -q function ; then
+        echo -nE "$(__git_ps1 '(%s)')"
+    fi
+    return
+
     local branch
     branch="$(_lp_git_branch)"
     if [[ -n "$branch" ]]; then
@@ -1817,7 +1823,9 @@ _lp_set_prompt()
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
+        #LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
+        # crobinso change: don't use any funky marks for VCS
+        LP_MARK="$(_lp_sr "${LP_MARK_DEFAULT}${NO_COL}")"
 
         LP_OLD_PWD="LP:$PWD"
 
